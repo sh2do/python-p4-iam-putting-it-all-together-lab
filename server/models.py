@@ -16,8 +16,8 @@ class User(db.Model, SerializerMixin):
     # Relationship with Recipe model
     recipes = db.relationship('Recipe', backref='user', lazy=True)
 
-    # Serialization rules to exclude password hash
-    serialize_rules = ('-_password_hash',)
+    # Serialization rules to exclude password hash and prevent circular references
+    serialize_rules = ('-_password_hash', '-recipes.user')
 
     @hybrid_property
     def password_hash(self):
@@ -48,6 +48,9 @@ class Recipe(db.Model, SerializerMixin):
     instructions = db.Column(db.Text, nullable=False)
     minutes_to_complete = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+
+    # Serialization rules to prevent circular references
+    serialize_rules = ('-user.recipes',)
 
     @validates('title')
     def validate_title(self, key, title):

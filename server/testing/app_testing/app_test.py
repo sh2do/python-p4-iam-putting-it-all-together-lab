@@ -1,7 +1,6 @@
 from faker import Faker
-import flask
 import pytest
-from random import randint, choice as rc
+from random import randint
 
 from app import app
 from models import db, User, Recipe
